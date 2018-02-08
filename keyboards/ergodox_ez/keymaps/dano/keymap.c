@@ -31,18 +31,15 @@ int cur_dance(qk_tap_dance_state_t *state)
   if (state->count == 1)
   {
     //If count = 1, and it has been interrupted - it doesn't matter if it is pressed or not: Send SINGLE_TAP
-    if (state->interrupted || state->pressed == 0)
-      return SINGLE_TAP;
-    else
+    if (state->interrupted || state->pressed)
       return SINGLE_HOLD;
+    else
+      return SINGLE_TAP;
   }
   else
     return 6; //magic number. At some point this method will expand to work for more presses
 }
 
-//**************** Definitions needed for quad function to work *********************//
-
-//instanalize an instance of 'tap' for the 'x' tap dance.
 static tap super_shift_state = {
     .is_press_action = true,
     .state = 0};
