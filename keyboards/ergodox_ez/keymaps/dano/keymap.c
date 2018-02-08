@@ -12,6 +12,77 @@ enum custom_keycodes
   RGB_SLD,
 };
 
+//**************** Definitions needed for quad function to work *********************//
+//Enums used to clearly convey the state of the tap dance
+enum
+{
+  SINGLE_TAP = 1,
+  SINGLE_HOLD = 2,
+};
+
+typedef struct
+{
+  bool is_press_action;
+  int state;
+} tap;
+
+int cur_dance(qk_tap_dance_state_t *state)
+{
+  if (state->count == 1)
+  {
+    //If count = 1, and it has been interrupted - it doesn't matter if it is pressed or not: Send SINGLE_TAP
+    if (state->interrupted || state->pressed == 0)
+      return SINGLE_TAP;
+    else
+      return SINGLE_HOLD;
+  }
+  else
+    return 6; //magic number. At some point this method will expand to work for more presses
+}
+
+//**************** Definitions needed for quad function to work *********************//
+
+//instanalize an instance of 'tap' for the 'x' tap dance.
+static tap super_shift_state = {
+    .is_press_action = true,
+    .state = 0};
+
+void super_shift_finished(qk_tap_dance_state_t *state, void *user_data)
+{
+  super_shift_state.state = cur_dance(state);
+  switch (super_shift_state.state)
+  {
+  case SINGLE_TAP:
+    set_oneshot_layer(1, ONESHOT_START);
+    break;
+  case SINGLE_HOLD:
+    register_code(KC_LGUI);
+    break;
+  }
+}
+
+void super_shift_reset(qk_tap_dance_state_t *state, void *user_data)
+{
+  switch (super_shift_state.state)
+  {
+  case SINGLE_TAP:
+    clear_oneshot_layer_state(ONESHOT_PRESSED);
+    break;
+  case SINGLE_HOLD:
+    unregister_code(KC_LGUI);
+    break;
+  }
+  super_shift_state.state = 0;
+}
+
+enum
+{
+  SUPER_SHIFT = 0
+};
+
+qk_tap_dance_action_t tap_dance_actions[] = {
+    [SUPER_SHIFT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, super_shift_finished, super_shift_reset)};
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [0] = KEYMAP(
@@ -22,7 +93,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         TT(2), TG(3), KC_LSHIFT, KC_LCTL, KC_LALT,
         LALT(LGUI(KC_LEFT)), LALT(LGUI(KC_DOWN)),
         LALT(LGUI(KC_F)),
-        GUI_T(KC_SPACE), KC_BSPACE, LGUI(KC_SPACE),
+        TD(SUPER_SHIFT), KC_BSPACE, LGUI(KC_SPACE),
 
         KC_RBRACKET, KC_6, KC_7, KC_8, KC_9, KC_0, KC_KP_MINUS,
         KC_RCBR, KC_J, KC_L, KC_U, KC_Y, KC_SCOLON, KC_BSLASH,
