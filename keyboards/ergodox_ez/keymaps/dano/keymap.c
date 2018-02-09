@@ -148,7 +148,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record)
   case SHRUG:
     if (record->event.pressed)
     {
-      SEND_STRING(SS_LCTRL("`") SS_LALT("00AF") SS_LALT("005C") SS_LALT("005F") SS_LALT("0028") SS_LALT("30C4") SS_LALT("0029") SS_LALT("005F") SS_LALT("002F") SS_LALT("00AF") SS_LCTRL("`"));
+      SEND_STRING(SS_LCTRL("`"));
+      SEND_STRING(SS_LALT("00AF"));
+      SEND_STRING(SS_LALT("005C"));
+      SEND_STRING(SS_LALT("005F"));
+      SEND_STRING(SS_LALT("0028"));
+      SEND_STRING(SS_LALT("30C4"));
+      SEND_STRING(SS_LALT("0029"));
+      SEND_STRING(SS_LALT("005F"));
+      SEND_STRING(SS_LALT("002F"));
+      SEND_STRING(SS_LALT("00AF"));
+      SEND_STRING(SS_LCTRL("`"));
     }
     return false;
     break;
@@ -156,7 +166,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record)
   case DIASPORA:
     if (record->event.pressed)
     {
-      SEND_STRING(SS_LCTRL("`") SS_LALT("03B4") SS_LALT("03B9") SS_LALT("03B1") SS_LALT("03C3") SS_LALT("03C0") SS_LALT("03BF") SS_LALT("03C1") SS_LALT("03AC") SS_LCTRL("`"));
+      SEND_STRING(SS_LCTRL("`"));
+      SEND_STRING(SS_LALT("03B4"));
+      SEND_STRING(SS_LALT("03B9"));
+      SEND_STRING(SS_LALT("03B1"));
+      SEND_STRING(SS_LALT("03C3"));
+      SEND_STRING(SS_LALT("03C0"));
+      SEND_STRING(SS_LALT("03BF"));
+      SEND_STRING(SS_LALT("03C1"));
+      SEND_STRING(SS_LALT("03AC"));
+      SEND_STRING(SS_LCTRL("`"));
     }
     return false;
     break;
