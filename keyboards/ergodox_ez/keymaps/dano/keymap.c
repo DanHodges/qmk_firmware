@@ -12,12 +12,11 @@ enum custom_keycodes
   RGB_SLD,
 };
 
-//**************** Definitions needed for quad function to work *********************//
-//Enums used to clearly convey the state of the tap dance
 enum
 {
   SINGLE_TAP = 1,
   SINGLE_HOLD = 2,
+  DOUBLE_TAP = 3,
 };
 
 typedef struct
@@ -30,14 +29,17 @@ int cur_dance(qk_tap_dance_state_t *state)
 {
   if (state->count == 1)
   {
-    //If count = 1, and it has been interrupted - it doesn't matter if it is pressed or not: Send SINGLE_TAP
     if (state->interrupted || state->pressed)
       return SINGLE_HOLD;
     else
       return SINGLE_TAP;
   }
+  if (state->count == 2)
+  {
+    return DOUBLE_TAP;
+  }
   else
-    return 6; //magic number. At some point this method will expand to work for more presses
+    return 99;
 }
 
 static tap super_shift_state = {
@@ -50,10 +52,20 @@ void super_shift_finished(qk_tap_dance_state_t *state, void *user_data)
   switch (super_shift_state.state)
   {
   case SINGLE_TAP:
-    set_oneshot_layer(1, ONESHOT_START);
+    if (IS_LAYER_ON(1))
+    {
+      layer_off(1);
+    }
+    else
+    {
+      set_oneshot_layer(1, ONESHOT_START);
+    }
     break;
   case SINGLE_HOLD:
     register_code(KC_LGUI);
+    break;
+  case DOUBLE_TAP:
+    layer_on(1);
     break;
   }
 }
